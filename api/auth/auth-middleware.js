@@ -20,7 +20,8 @@ const restricted = async (req, res, next) => {
 }
 
 const only = role_name => async (req, res, next) => {
-  next({ role: role_name });
+  console.log(`req.role_name: ${req.role_name}`);
+  next();
   /*
     If the user does not provide a token in the Authorization header with a role_name
     inside its payload matching the role_name passed to this function as its argument:

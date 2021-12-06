@@ -1,29 +1,12 @@
 const db = require('../../data/db-config.js');
 
-async function find() {
+function find() {
   return db('users')
     .join('roles', 'users.role_id', 'roles.role_id')
     .select('users.user_id', 'users.username', 'roles.role_name')
-  /**
-    You will need to join two tables.
-    Resolves to an ARRAY with all users.
-
-    [
-      {
-        "user_id": 1,
-        "username": "bob",
-        "role_name": "admin"
-      },
-      {
-        "user_id": 2,
-        "username": "sue",
-        "role_name": "instructor"
-      }
-    ]
-   */
 }
 
-async function findBy(filter) {
+function findBy(filter) {
   console.log(filter)
   /**
     You will need to join two tables.
@@ -38,10 +21,14 @@ async function findBy(filter) {
       }
     ]
    */
+  return db('users')
+    .join('roles', 'users.role_id', 'roles.role_id')
+    .where(filter)
+    .select('users.user_id', 'users.username', 'users.password', 'roles.role_name')
 }
 
-async function findById(user_id) {
-  console.log(user_id);
+function findById(user_id) {
+  console.log(`findById(${user_id})`);
   /**
     You will need to join two tables.
     Resolves to the user with the given user_id.
@@ -52,6 +39,10 @@ async function findById(user_id) {
       "role_name": "instructor"
     }
    */
+  return db('users')
+    .join('roles', 'users.role_id', 'roles.role_id')
+    .where('users.user_id', user_id)
+    .select('users.user_id', 'users.username', 'roles.role_name').first()
 }
 
 /**
