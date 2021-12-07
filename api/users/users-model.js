@@ -1,4 +1,7 @@
 const db = require('../../data/db-config.js');
+const bcrypt = require('bcryptjs');
+const { generateToken } = require('../helpers/jwt');
+
 
 function find() {
   return db('users')
@@ -7,7 +10,6 @@ function find() {
 }
 
 function findBy(filter) {
-  console.log(filter)
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users that match the filter condition.
@@ -28,7 +30,6 @@ function findBy(filter) {
 }
 
 function findById(user_id) {
-  console.log(`findById(${user_id})`);
   /**
     You will need to join two tables.
     Resolves to the user with the given user_id.
@@ -80,9 +81,24 @@ async function add({ username, password, role_name }) { // done for you
   return findById(created_user_id)
 }
 
+async function login(credentials) {
+  return findBy({ username: credentials.username })
+    .then(users => {
+      let user = users[0];
+      if (user && bcrypt.compareSync(credentials.password, user.password)) {
+        user.token = generateToken(user);
+        const { user_id, username, role_name, token } = user;
+        return { user_id, username, role_name, token };
+      } else {
+        return null
+      }
+    })
+}
+
 module.exports = {
   add,
   find,
   findBy,
   findById,
+  login
 };

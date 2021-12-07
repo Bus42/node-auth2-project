@@ -28,7 +28,6 @@ router.get("/", restricted, async (req, res) => {
   ]
  */
 router.get("/:user_id", restricted, only('admin'), async (req, res) => { // done for you
-  console.log(`GET /api/users/${req.params.user_id}`);
   Users.findById(req.params.user_id)
     .then(user => {
       if (user) {
