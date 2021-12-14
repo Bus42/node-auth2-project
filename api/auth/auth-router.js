@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
-const { JWT_SECRET } = require("../secrets"); // use this secret!
+const Users = require("../users/users-model");
+const jwtDecode = require('jwt-decode');
 
 router.post("/register", validateRoleName, async (req, res) => {
   res.status(200).send("register");
@@ -19,7 +20,6 @@ router.post("/register", validateRoleName, async (req, res) => {
 
 
 router.post("/login", checkUsernameExists, async (req, res) => {
-  res.status(200).send("login");
   /**
     [POST] /api/auth/login { "username": "sue", "password": "1234" }
 
@@ -39,6 +39,18 @@ router.post("/login", checkUsernameExists, async (req, res) => {
       "role_name": "admin" // the role of the authenticated user
     }
    */
+  Users.login(req.body)
+    .then(user => {
+      if (!user) {
+        res.status(401).json({ message: "Invalid Credentials" });
+      } else {
+        console.log(jwtDecode(user.token))
+        res.status(200).send({ ...user, message: `${user.username} is back!` });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ ...err, message: "Error logging in" });
+    });
 });
 
 module.exports = router;

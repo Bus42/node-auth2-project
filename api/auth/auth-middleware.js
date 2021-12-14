@@ -15,12 +15,13 @@ const restricted = async (req, res, next) => {
       "message": "Token invalid"
     }
 
-    Put the decoded token in the req object, to make life easier for middlewares downstream!
+    Put the decoded token in the req object, to make life easier for middleware downstream!
   */
 }
 
 const only = role_name => async (req, res, next) => {
-  next({ role: role_name });
+  console.log(`role_name: ${role_name}`);
+  next();
   /*
     If the user does not provide a token in the Authorization header with a role_name
     inside its payload matching the role_name passed to this function as its argument:
